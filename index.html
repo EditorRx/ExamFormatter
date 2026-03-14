@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Maverix Data Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+.container{
+width:80%;
+margin:auto;
+}
+
+.titleBox{
+background:#111827;
+border:2px solid #22c55e;
+border-radius:12px;
+padding:15px;
+margin:20px;
+box-shadow:0 0 15px #22c55e;
+}
+
+input{
+padding:6px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
+button{
+padding:6px 12px;
+background:#22c55e;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+h2{
+color:#22c55e;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎮 Maverix Control Panel</h1>
+
+<div class="container" id="container"></div>
+
+<script>
+
+let titles = JSON.parse(localStorage.getItem("titles")) || [
+{title:"Title 1", page:"", no:"", ending:""},
+{title:"Title 2", page:"", no:"", ending:""},
+{title:"Title 3", page:"", no:"", ending:""},
+{title:"Title 4", page:"", no:"", ending:""},
+{title:"Title 5", page:"", no:"", ending:""},
+{title:"Title 5", page:"", no:"", ending:""},
+{title:"Title 5", page:"", no:"", ending:""},
+{title:"Title 5", page:"", no:"", ending:""},
+{title:"Title 5", page:"", no:"", ending:""},
+{title:"Title 6", page:"", no:"", ending:""}
+];
+
+function save(){
+localStorage.setItem("titles",JSON.stringify(titles));
+}
+
+function render(){
+
+let html="";
+
+titles.forEach((t,i)=>{
+
+html+=`
+<div class="titleBox">
+
+<h2 contenteditable="true"
+oninput="titles[${i}].title=this.innerText;save()">
+${t.title}
+</h2>
+
+Page:
+<input value="${t.page}"
+oninput="titles[${i}].page=this.value;save()">
+
+No:
+<input value="${t.no}"
+oninput="titles[${i}].no=this.value;save()">
+
+Ending:
+<input value="${t.ending}"
+oninput="titles[${i}].ending=this.value;save()">
+
+</div>
+`;
+
+});
+
+document.getElementById("container").innerHTML=html;
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
