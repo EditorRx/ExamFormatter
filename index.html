@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Exact Output to PDF</title>
+<title>Ultimate Formatter</title>
 
 <!-- Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -23,26 +23,28 @@ textarea {
     margin-top: 20px;
     padding: 10px;
     border: 1px solid #ccc;
+    min-height: 150px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Formatter + Exact PDF</h2>
+<h2>🔥 Smart Question Formatter</h2>
 
-<textarea id="inputText" placeholder="Paste text here..."></textarea><br>
+<textarea id="inputText" placeholder="Paste questions here..."></textarea><br>
 
 <button onclick="formatText()">Format</button>
 <button onclick="downloadPDF()">Download PDF</button>
 
-<div id="output"></div>
+<div id="output" contenteditable="true"></div>
 
 <script>
 function formatText() {
     let text = document.getElementById("inputText").value;
 
-    let formatted = text.replace(/Q\.[^?]*\?/g, function(match) {
+    // Match: number. ... ? OR —
+    let formatted = text.replace(/\d+\.[^\n?—]*(\?|—)/g, function(match) {
         return "<b>" + match + "</b>";
     });
 
@@ -59,8 +61,8 @@ async function downloadPDF() {
 
     let pdf = new jsPDF('p', 'mm', 'a4');
 
-    let imgWidth = 210; // A4 width
-    let pageHeight = 297; // A4 height
+    let imgWidth = 210;
+    let pageHeight = 297;
     let imgHeight = canvas.height * imgWidth / canvas.width;
 
     let heightLeft = imgHeight;
@@ -76,7 +78,7 @@ async function downloadPDF() {
         heightLeft -= pageHeight;
     }
 
-    pdf.save("Formatted_Output.pdf");
+    pdf.save("Exam_Output.pdf");
 }
 </script>
 
