@@ -1,116 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Panel</title>
+<meta charset="UTF-8">
+<title>Exact Output to PDF</title>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-
-body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
+body {
+    font-family: Arial;
+    padding: 20px;
 }
-
-.container{
-width:80%;
-margin:auto;
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
 }
-
-.titleBox{
-background:#111827;
-border:2px solid #22c55e;
-border-radius:12px;
-padding:15px;
-margin:20px;
-box-shadow:0 0 15px #22c55e;
+#output {
+    white-space: pre-wrap;
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
 }
-
-input{
-padding:6px;
-margin:5px;
-border-radius:6px;
-border:none;
-}
-
-button{
-padding:6px 12px;
-background:#22c55e;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-h2{
-color:#22c55e;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<h1>Panel</h1>
+<h2>Formatter + Exact PDF</h2>
 
-<div class="container" id="container"></div>
+<textarea id="inputText" placeholder="Paste text here..."></textarea><br>
+
+<button onclick="formatText()">Format</button>
+<button onclick="downloadPDF()">Download PDF</button>
+
+<div id="output"></div>
 
 <script>
+function formatText() {
+    let text = document.getElementById("inputText").value;
 
-let titles = JSON.parse(localStorage.getItem("titles")) || [
-{title:"Title 1", page:"", no:"", ending:""},
-{title:"Title 2", page:"", no:"", ending:""},
-{title:"Title 3", page:"", no:"", ending:""},
-{title:"Title 4", page:"", no:"", ending:""},
-{title:"Title 5", page:"", no:"", ending:""},
-{title:"Title 5", page:"", no:"", ending:""},
-{title:"Title 5", page:"", no:"", ending:""},
-{title:"Title 5", page:"", no:"", ending:""},
-{title:"Title 5", page:"", no:"", ending:""},
-{title:"Title 6", page:"", no:"", ending:""}
-];
+    let formatted = text.replace(/Q\.[^?]*\?/g, function(match) {
+        return "<b>" + match + "</b>";
+    });
 
-function save(){
-localStorage.setItem("titles",JSON.stringify(titles));
+    document.getElementById("output").innerHTML = formatted;
 }
 
-function render(){
+async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
 
-let html="";
+    let element = document.getElementById("output");
 
-titles.forEach((t,i)=>{
+    let canvas = await html2canvas(element);
+    let imgData = canvas.toDataURL("image/png");
 
-html+=`
-<div class="titleBox">
+    let pdf = new jsPDF('p', 'mm', 'a4');
 
-<h2 contenteditable="true"
-oninput="titles[${i}].title=this.innerText;save()">
-${t.title}
-</h2>
+    let imgWidth = 210; // A4 width
+    let pageHeight = 297; // A4 height
+    let imgHeight = canvas.height * imgWidth / canvas.width;
 
-Page:
-<input value="${t.page}"
-oninput="titles[${i}].page=this.value;save()">
+    let heightLeft = imgHeight;
+    let position = 0;
 
-No:
-<input value="${t.no}"
-oninput="titles[${i}].no=this.value;save()">
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
 
-Ending:
-<input value="${t.ending}"
-oninput="titles[${i}].ending=this.value;save()">
+    while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+    }
 
-</div>
-`;
-
-});
-
-document.getElementById("container").innerHTML=html;
-
+    pdf.save("Formatted_Output.pdf");
 }
-
-render();
-
 </script>
 
 </body>
