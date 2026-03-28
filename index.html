@@ -1,146 +1,360 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Generatd by Rk</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<title>Created by Rahul</title>
 
 <style>
 body {
-    font-family: Arial;
+    font-family: Poppins, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    margin: 0;
     padding: 20px;
+    color: white;
 }
 
-/* Input */
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 textarea {
     width: 100%;
-    height: 150px;
-    padding: 10px;
+    height: 200px;
+    border-radius: 12px;
+    border: none;
+    padding: 12px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    outline: none;
 }
 
-/* A4 Layout */
-#output {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 15mm;
-    border: 1px solid #000;
-
-    column-count: 2;
-    column-gap: 20px;
-
-    font-size: 12px;
-    line-height: 1.2;
-
-    white-space: pre-wrap;
+button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-/* Remove unwanted spacing */
-#output * {
-    margin: 0;
-    padding: 0;
+button:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
-/* Question spacing */
-.question {
-    margin-bottom: 6px;
+.convert-btn {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    box-shadow: 0 0 15px #3b82f6;
+    color: white;
 }
 
-/* Option spacing */
-.option {
+.download-btn {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+    box-shadow: 0 0 15px #22c55e;
+    color: black;
+}
+
+/* 🔥 AI BUTTON */
+.ai-btn {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    box-shadow: 0 0 15px #0072ff;
+    color: white;
+}
+
+/* FOLLOW */
+.follow-btn {
+    background: linear-gradient(135deg, #9333ea, #f43f5e);
+    box-shadow: 0 0 15px #9333ea;
+    color: white;
+    padding: 8px 15px;
+}
+
+/* HELP */
+.help-btn {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    box-shadow: 0 0 15px #f59e0b;
+    color: black;
+    padding: 8px 12px;
     margin-left: 10px;
 }
 
-/* Pair layout */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#paper {
+    margin-top: 20px;
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.columns {
+    display: flex;
+    gap: 20px;
+}
+
+.col {
+    width: 50%;
+}
+
+.question {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.option {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
 .option-row {
     display: flex;
     justify-content: space-between;
     margin-left: 10px;
+    font-size: 12px;
 }
 
-.option-row span {
-    width: 48%;
+/* 🤖 POPUP */
+.ai-popup {
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.7);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+}
+
+.ai-box {
+    background:#111;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 0 30px #00c6ff;
 }
 </style>
+
 </head>
 
 <body>
 
-<h2>🔥 Exam Generator Ultimate</h2>
+<div class="container">
 
-<textarea id="inputText" placeholder="Paste questions here..."></textarea><br>
+    <div class="header">
+        <h2>📝 Exam paper Formatter</h2>
+        <div>
+            <button class="help-btn" onclick="showManual()">?</button>
+            <button class="follow-btn" onclick="followCreator()">🔥 Follow</button>
+        </div>
+    </div>
 
-<label>
-<input type="checkbox" id="pairToggle"> Pair Options (A-B / C-D)
-</label>
+    <textarea id="inputText" placeholder="Paste questions..."></textarea>
 
-<br><br>
+    <div class="btn-group">
+        <button class="convert-btn" onclick="playConvert(); formatText()">⚡ Convert</button>
+        <button class="download-btn" onclick="playDownload(); downloadPDF()">📥 Download PDF</button>
+        <button class="ai-btn" onclick="showAI()">🤖 AI Answer</button>
+    </div>
 
-<button onclick="formatText()">Format</button>
-<button onclick="downloadPDF()">Download PDF</button>
+    <div id="paper"></div>
+</div>
 
-<div id="output" contenteditable="true"></div>
+<!-- 🤖 POPUP -->
+<div id="aiPopup" class="ai-popup">
+    <div class="ai-box">
+        <h2>🚀 Coming Soon</h2>
+        <p>AI Answer feature will auto-generate answers soon!</p>
+        <button onclick="closeAI()">OK</button>
+    </div>
+</div>
+
+<audio id="convertSound" src="H.mp3"></audio>
+<audio id="downloadSound" src="O.mp3"></audio>
+<audio id="followSound" src="S.mp3"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
+
+function showAI(){
+    document.getElementById("aiPopup").style.display="flex";
+}
+
+function closeAI(){
+    document.getElementById("aiPopup").style.display="none";
+}
+
+function playConvert() {
+    document.getElementById("convertSound").play();
+}
+
+function playDownload() {
+    document.getElementById("downloadSound").play();
+}
+
+function followCreator() {
+    document.getElementById("followSound").play();
+    window.open("https://instagram.com/itz_maverix", "_blank");
+}
+
+function showManual(){
+alert(
+`📘 HOW TO USE
+
+1. Paste questions properly
+2. Click Convert
+3. Download PDF
+
+⚙️ FEATURES:
+✔ Auto Format
+✔ 2 Column Layout
+✔ Smart Options
+
+⚠️ LIMIT:
+Max 32 Questions
+
+🤖 AI Answer:
+Coming Soon`
+);
+}
+
 function formatText() {
+
     let text = document.getElementById("inputText").value;
-    let pairMode = document.getElementById("pairToggle").checked;
-
     let lines = text.split("\n");
-    let result = [];
 
-    for (let i = 0; i < lines.length; i++) {
+    let questions = [];
+    let currentQ = "";
+    let optionBuffer = [];
 
-        let line = lines[i];
+    function processOptions(buffer) {
 
-        // Detect question line
-        if (line.match(/^\d+\./)) {
-            line = line.replace(/(\d+\.[^\n?—]*(\?|—))/, "<b>$1</b>");
-            result.push(`<div class="question">${line}</div>`);
-        }
+        if (!currentQ) return;
 
-        // Detect options
-        else if (line.match(/^\([A-Da-d]\)/)) {
+        let noPair = buffer.some(line => {
+            let txt = line.replace(/^\([A-Da-d]\)\s*/, "").trim();
+            return txt.length > 18;
+        });
 
-            if (pairMode && i + 1 < lines.length && lines[i+1].match(/^\([A-Da-d]\)/)) {
+        currentQ += `<div style="margin-top:5px;"></div>`;
 
-                let row = `<div class="option-row">
-                                <span>${line}</span>
-                                <span>${lines[i+1]}</span>
-                           </div>`;
-                result.push(row);
-                i++; // skip next
-
-            } else {
-                result.push(`<div class="option">${line}</div>`);
+        if (noPair) {
+            buffer.forEach(line => {
+                currentQ += `<div class="option">${line}</div>`;
+            });
+        } else {
+            for (let i = 0; i < buffer.length; i += 2) {
+                currentQ += `<div class="option-row">
+                                <span>${buffer[i] || ""}</span>
+                                <span>${buffer[i+1] || ""}</span>
+                             </div>`;
             }
         }
 
-        // Normal text
-        else {
-            result.push(`<div>${line}</div>`);
-        }
+        currentQ += `<div style="height:12px;"></div>`;
     }
 
-    document.getElementById("output").innerHTML = result.join("");
+    let i = 0;
+
+    while (i < lines.length) {
+
+        let line = lines[i].trim();
+        if (!line) { i++; continue; }
+
+        if (/^\d+\./.test(line)) {
+
+            processOptions(optionBuffer);
+            optionBuffer = [];
+
+            if (currentQ) questions.push(currentQ);
+
+            let questionLines = [line];
+            i++;
+
+            while (i < lines.length &&
+                   !lines[i].trim().match(/^\([A-Da-d]\)/) &&
+                   !lines[i].trim().match(/^\d+\./)) {
+
+                if (lines[i].trim() !== "") {
+                    questionLines.push(lines[i].trim());
+                }
+                i++;
+            }
+
+            let fullQuestion = questionLines.join(" ");
+
+            let match = fullQuestion.match(/^(\d+\.\s*.*?[?—:])/);
+
+            if (match) {
+                let boldPart = match[1];
+                let rest = fullQuestion.slice(boldPart.length);
+                fullQuestion = `<b>${boldPart}</b>${rest}`;
+            }
+
+            currentQ = `<div class="question">${fullQuestion}</div>`;
+            continue;
+        }
+
+        if (/^\([A-Da-d]\)/.test(line)) {
+            optionBuffer.push(line);
+        }
+
+        i++;
+    }
+
+    processOptions(optionBuffer);
+    if (currentQ) questions.push(currentQ);
+
+    if(questions.length > 32){
+        alert("Max 32 questions allowed!");
+        return;
+    }
+
+    let left = questions.slice(0, 16).join("");
+    let right = questions.slice(16).join("");
+
+    document.getElementById("paper").innerHTML = `
+        <div class="columns">
+            <div class="col">${left}</div>
+            <div class="col">${right}</div>
+        </div>
+    `;
 }
 
-async function downloadPDF() {
-    const { jsPDF } = window.jspdf;
+function downloadPDF() {
 
-    let element = document.getElementById("output");
+    let element = document.getElementById("paper");
 
-    let canvas = await html2canvas(element, { scale: 2 });
+    let opt = {
+        margin: 10,
+        filename: 'Question_Paper.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4' }
+    };
 
-    let imgData = canvas.toDataURL("image/png");
-
-    let pdf = new jsPDF('p', 'mm', 'a4');
-
-    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
-
-    pdf.save("Exam_Paper.pdf");
+    html2pdf().set(opt).from(element).save();
 }
+
 </script>
 
 </body>
