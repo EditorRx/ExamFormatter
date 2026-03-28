@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Created by Rahul</title>
+<title>Creator-Rahul</title>
 
 <style>
 body {
@@ -131,6 +131,16 @@ button:hover {
     font-size: 12px;
 }
 
+/* ✅ PDF Pages */
+.page {
+    width: 794px;
+    min-height: 1122px;
+    padding: 20px;
+    background: white;
+    margin-bottom: 20px;
+    page-break-after: always;
+}
+
 .ai-popup {
     display: none;
     position: fixed;
@@ -160,7 +170,7 @@ button:hover {
 <div class="container">
 
     <div class="header">
-        <h2>📝 Exam paper Formatter</h2>
+        <h2>📝 Exam Paper Formatter</h2>
         <div>
             <button class="help-btn" onclick="showManual()">?</button>
             <button class="follow-btn" onclick="followCreator()">🔥 Follow</button>
@@ -174,20 +184,17 @@ button:hover {
         <button class="download-btn" onclick="playDownload(); downloadPDF()">📥 Download PDF</button>
         <button class="ai-btn" onclick="showAI()">🤖 AI Answer</button>
 
-        <!-- ✅ MOBILE EDIT BUTTONS -->
         <button onclick="makeBold()">🅱 Bold</button>
         <button onclick="makeNormal()">Normal</button>
         <button onclick="undoEdit()">↩ Undo</button>
     </div>
 
-    <!-- ✅ Editable Output -->
     <div id="paper" contenteditable="true"></div>
 </div>
 
 <div id="aiPopup" class="ai-popup">
     <div class="ai-box">
         <h2>🚀 Coming Soon</h2>
-        <p>AI Answer feature will auto-generate answers soon!</p>
         <button onclick="closeAI()">OK</button>
     </div>
 </div>
@@ -207,19 +214,16 @@ function saveState() {
     historyStack.push(paper.innerHTML);
 }
 
-// 🅱 Bold
 function makeBold() {
     saveState();
     document.execCommand("bold");
 }
 
-// 🔤 Normal
 function makeNormal() {
     saveState();
     document.execCommand("removeFormat");
 }
 
-// ↩ Undo
 function undoEdit() {
     if (historyStack.length > 0) {
         paper.innerHTML = historyStack.pop();
@@ -256,135 +260,95 @@ alert(`📘 HOW TO USE
 4. Download PDF`);
 }
 
+// ✅ FORMAT QUESTIONS
 function formatText() {
-
     let text = document.getElementById("inputText").value;
     let lines = text.split("\n");
-
     let questions = [];
     let currentQ = "";
     let optionBuffer = [];
 
-    function processOptions(buffer) {
-
+    function processOptions(buffer){
         if (!currentQ) return;
-
-        let noPair = buffer.some(line => {
-            let txt = line.replace(/^\([A-Da-d]\)\s*/, "").trim();
-            return txt.length > 18;
-        });
+        let noPair = buffer.some(line => line.replace(/^\([A-Da-d]\)\s*/, "").trim().length > 18);
 
         currentQ += `<div style="margin-top:5px;"></div>`;
 
-        if (noPair) {
-            buffer.forEach(line => {
+        if(noPair){
+            buffer.forEach(line=>{
                 currentQ += `<div class="option">${line}</div>`;
             });
         } else {
-            for (let i = 0; i < buffer.length; i += 2) {
+            for(let i=0;i<buffer.length;i+=2){
                 currentQ += `<div class="option-row">
-                                <span>${buffer[i] || ""}</span>
-                                <span>${buffer[i+1] || ""}</span>
-                             </div>`;
+                    <span>${buffer[i]||""}</span>
+                    <span>${buffer[i+1]||""}</span>
+                </div>`;
             }
         }
-
         currentQ += `<div style="height:12px;"></div>`;
     }
 
-    let i = 0;
-
-    while (i < lines.length) {
-
-        let line = lines[i].trim();
-        if (!line) { i++; continue; }
-
-        if (/^\d+\./.test(line)) {
-
+    let i=0;
+    while(i<lines.length){
+        let line=lines[i].trim();
+        if(!line){i++; continue;}
+        if(/^\d+\./.test(line)){
             processOptions(optionBuffer);
-            optionBuffer = [];
+            optionBuffer=[];
+            if(currentQ) questions.push(currentQ);
 
-            if (currentQ) questions.push(currentQ);
-
-            let questionLines = [line];
+            let questionLines=[line];
             i++;
-
-            while (i < lines.length &&
-                   !lines[i].trim().match(/^\([A-Da-d]\)/) &&
-                   !lines[i].trim().match(/^\d+\./)) {
-
-                if (lines[i].trim() !== "") {
-                    questionLines.push(lines[i].trim());
-                }
+            while(i<lines.length && !lines[i].trim().match(/^\([A-Da-d]\)/) && !lines[i].trim().match(/^\d+\./)){
+                if(lines[i].trim()!="") questionLines.push(lines[i].trim());
                 i++;
             }
 
-            let fullQuestion = questionLines.join(" ");
-
-            let match = fullQuestion.match(/^(\d+\.\s*.*?[?—:])/);
-
-            if (match) {
-                let boldPart = match[1];
-                let rest = fullQuestion.slice(boldPart.length);
-                fullQuestion = `<b>${boldPart}</b>${rest}`;
+            let fullQ = questionLines.join(" ");
+            let match = fullQ.match(/^(\d+\.\s*.*?[?—:])/);
+            if(match){
+                let boldPart=match[1];
+                let rest=fullQ.slice(boldPart.length);
+                fullQ = `<b>${boldPart}</b>${rest}`;
             }
-
-            currentQ = `<div class="question">${fullQuestion}</div>`;
+            currentQ=`<div class="question">${fullQ}</div>`;
             continue;
         }
-
-        if (/^\([A-Da-d]\)/.test(line)) {
-            optionBuffer.push(line);
-        }
-
+        if(/^\([A-Da-d]\)/.test(line)) optionBuffer.push(line);
         i++;
     }
 
     processOptions(optionBuffer);
-    if (currentQ) questions.push(currentQ);
+    if(currentQ) questions.push(currentQ);
 
-    if(questions.length > 32){
-        alert("Max 32 questions allowed!");
-        return;
-    }
-
-    let left = questions.slice(0, 16).join("");
-    let right = questions.slice(16).join("");
-
-    document.getElementById("paper").innerHTML = `
-        <div class="columns">
+    // ✅ SPLIT QUESTIONS INTO PAGES 16 PER COLUMN
+    let pages=[];
+    for(let p=0;p<questions.length;p+=32){
+        let chunk = questions.slice(p,p+32);
+        let left = chunk.slice(0,16).join("");
+        let right = chunk.slice(16).join("");
+        pages.push(`<div class="page"><div class="columns">
             <div class="col">${left}</div>
             <div class="col">${right}</div>
-        </div>
-    `;
+        </div></div>`);
+    }
+
+    paper.innerHTML = pages.join("");
 }
 
-function downloadPDF() {
-
-    let element = document.getElementById("paper");
-
-    let originalHeight = element.scrollHeight;
-    let a4Height = 1122;
-
-    let scaleFactor = originalHeight > a4Height ? a4Height / originalHeight : 1;
-
-    element.style.transform = `scale(${scaleFactor})`;
-    element.style.transformOrigin = "top left";
-
+// ✅ DOWNLOAD PDF MULTI-PAGE
+function downloadPDF(){
+    let element = paper;
     let opt = {
-        margin: 0,
-        filename: 'Question_Paper.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'px', format: [794, 1122] }
+        margin:0,
+        filename:'Question_Paper.pdf',
+        image:{type:'jpeg',quality:1},
+        html2canvas:{scale:2},
+        jsPDF:{unit:'px',format:[794,1122]}
     };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-        element.style.transform = "scale(1)";
-    });
+    html2pdf().set(opt).from(element).save();
 }
-
 </script>
-
 </body>
 </html>
