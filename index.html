@@ -344,17 +344,32 @@ function downloadPDF() {
 
     let element = document.getElementById("paper");
 
+    // 🧠 SCALE LOGIC
+    let originalHeight = element.scrollHeight;
+    let a4Height = 1122; // approx px for A4
+
+    let scaleFactor = 1;
+
+    if (originalHeight > a4Height) {
+        scaleFactor = a4Height / originalHeight;
+    }
+
+    element.style.transform = `scale(${scaleFactor})`;
+    element.style.transformOrigin = "top left";
+
     let opt = {
-        margin: 10,
+        margin: 0,
         filename: 'Question_Paper.pdf',
         image: { type: 'jpeg', quality: 1 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4' }
+        jsPDF: { unit: 'px', format: [794, 1122] } // exact A4 size
     };
 
-    html2pdf().set(opt).from(element).save();
+    html2pdf().set(opt).from(element).save().then(() => {
+        // 🔄 Reset back
+        element.style.transform = "scale(1)";
+    });
 }
-
 </script>
 
 </body>
