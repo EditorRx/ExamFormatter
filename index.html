@@ -1,229 +1,249 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Creator-Rahul</title>
+    <title>Exam Paper Generator</title>
 
-<style>
-body {
-    font-family: Poppins, sans-serif;
-    background: linear-gradient(135deg, #0f172a, #1e293b);
-    margin: 0;
-    padding: 20px;
-    color: white;
-}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-.container {
-    max-width: 900px;
-    margin: auto;
-    background: rgba(255,255,255,0.05);
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #1e293b;
+        }
 
-textarea {
-    width: 100%;
-    height: 200px;
-    border-radius: 12px;
-    border: none;
-    padding: 12px;
-    background: rgba(255,255,255,0.1);
-    color: white;
-    outline: none;
-}
+        h2 {
+            text-align: center;
+            color: #0f172a;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
 
-button {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    font-size: 12px;
-}
+        textarea {
+            width: 100%;
+            height: 180px;
+            border: 2px solid #0f172a;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+        }
 
-button:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-}
+        button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
 
-.convert-btn {background: linear-gradient(135deg, #3b82f6, #06b6d4); box-shadow: 0 0 15px #3b82f6; color: white;}
-.download-btn {background: linear-gradient(135deg, #22c55e, #4ade80); box-shadow: 0 0 15px #22c55e; color: black;}
-.ai-btn {background: linear-gradient(135deg, #00c6ff, #0072ff); box-shadow: 0 0 15px #0072ff; color: white;}
-.follow-btn {background: linear-gradient(135deg, #9333ea, #f43f5e); box-shadow: 0 0 15px #9333ea; color: white; padding: 8px 15px;}
-.help-btn {background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 0 15px #f59e0b; color: black; padding: 8px 12px; margin-left: 10px;}
+        button:hover {
+            opacity: 0.85;
+        }
 
-.btn-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 15px;
-}
+        #controls button {
+            background: #0f172a;
+            color: #fff;
+        }
 
-#paper {
-    margin-top: 20px;
-    color: black;
-    outline: none;
-}
+        #formatButtons button {
+            background: #f97316;
+            color: #fff;
+            margin-right: 5px;
+        }
 
-.page-preview {
-    width: 1102px;  /* tabloid width approx */
-    min-height: 1587px; /* tabloid height approx */
-    background: white;
-    margin-bottom: 20px;
-    padding: 20px 0;
-    border-radius: 10px;
-    box-sizing: border-box;
-    display: flex;
-}
+        /* ========================= OUTPUT AREA STYLE ========================= */
+        #paper {
+            width: 794px;   /* A4 width */
+            min-height: 1123px;
+            border: 2px solid #ccc;
+            padding: 20px;
+            margin: 20px 8px; /* top/bottom 20px, left/right 8px */
+            border-radius: 10px;
+            background: #ffffff; /* WHITE BACKGROUND */
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            color: #1e293b;
+        }
 
-.left-margin { width:6%; }
-.right-margin { width:4%; }
-.col { width: 45%; padding:0 5px; }
+        .columns {
+            display: flex;
+            gap: 20px;
+        }
 
-.question-block {margin-bottom:10px;}
-.question {font-size:14px; margin-bottom:5px;} /* slightly bigger */
-.option-row {display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;}
+        .col {
+            width: 50%;
+        }
 
-.ai-popup {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:999;}
-.ai-box {background:#111; padding:25px; border-radius:15px; text-align:center; box-shadow:0 0 30px #00c6ff;}
-</style>
+        .question {
+            margin-top: 15px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
 
+        .option, .option-row {
+            margin-top: 4px; /* spacing between option rows */
+        }
+
+        .option-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .option-row span {
+            width: 48%;
+        }
+
+        .vertical-option span {
+            display: block;
+            margin-left: 0;
+            margin-top: 3px;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
+<h2>📄 Exam Paper Generator</h2>
 
-    <div class="header">
-        <h2>📝 Exam Paper Formatter</h2>
-        <div>
-            <button class="help-btn" onclick="showManual()">?</button>
-            <button class="follow-btn" onclick="followCreator()">🔥 Follow</button>
-        </div>
-    </div>
+<textarea id="inputText" placeholder="Paste questions..."></textarea><br>
 
-    <textarea id="inputText" placeholder="Paste questions..."></textarea>
-
-    <div class="btn-group">
-        <button class="convert-btn" onclick="playConvert(); formatText()">⚡ Convert</button>
-        <button class="download-btn" onclick="playDownload(); downloadPDF()">📥 Download PDF</button>
-        <button class="ai-btn" onclick="showAI()">🤖 AI Answer</button>
-        <button onclick="makeBold()">🅱 Bold</button>
-        <button onclick="makeNormal()">Normal</button>
-        <button onclick="undoEdit()">↩ Undo</button>
-    </div>
-
-    <div id="paper" contenteditable="true"></div>
+<div id="controls">
+    <button onclick="formatText()">Generate</button>
+    <button onclick="downloadPDF()">Download PDF</button>
 </div>
 
-<div id="aiPopup" class="ai-popup">
-    <div class="ai-box">
-        <h2>🚀 Coming Soon</h2>
-        <p>AI Answer feature will auto-generate answers soon!</p>
-        <button onclick="closeAI()">OK</button>
-    </div>
+<div id="formatButtons">
+    <button onclick="makeBold()">Bold</button>
+    <button onclick="makeNormal()">Normal</button>
 </div>
 
-<audio id="convertSound" src="H.mp3"></audio>
-<audio id="downloadSound" src="O.mp3"></audio>
-<audio id="followSound" src="S.mp3"></audio>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<div id="paper" contenteditable="true"></div>
 
 <script>
-let historyStack = [];
-let paper = document.getElementById("paper");
+function formatText() {
 
-function saveState(){ historyStack.push(paper.innerHTML); }
-function makeBold(){ saveState(); document.execCommand("bold"); }
-function makeNormal(){ saveState(); document.execCommand("removeFormat"); }
-function undoEdit(){ if(historyStack.length>0){ paper.innerHTML = historyStack.pop(); }}
-function showAI(){ document.getElementById("aiPopup").style.display="flex"; }
-function closeAI(){ document.getElementById("aiPopup").style.display="none"; }
-function playConvert(){ document.getElementById("convertSound").play(); }
-function playDownload(){ document.getElementById("downloadSound").play(); }
-function followCreator(){ document.getElementById("followSound").play(); window.open("https://instagram.com/itz_maverix","_blank"); }
-function showManual(){ alert(`📘 HOW TO USE\n\n1. Paste questions properly\n2. Click Convert\n3. Select text → use Bold / Normal buttons\n4. Download PDF`); }
-
-function formatText(){
     let text = document.getElementById("inputText").value;
     let lines = text.split("\n");
+
     let questions = [];
     let currentQ = "";
     let optionBuffer = [];
 
-    function processOptions(buffer){
-        if(!currentQ) return;
-        currentQ += `<div style="margin-top:5px;"></div>`;
-        if(buffer.length ===4){
-            currentQ += `<div class="option-row"><span>${buffer[0]}</span><span>${buffer[1]}</span></div>`;
-            currentQ += `<div class="option-row"><span>${buffer[2]}</span><span>${buffer[3]}</span></div>`;
-        }else{
-            buffer.forEach(line=> currentQ+=`<div class="option-row"><span>${line}</span></div>`);
+    function processOptions(buffer, isAssertion=false) {
+        if (!currentQ) return;
+
+        if (isAssertion) {
+            buffer.forEach(line => {
+                currentQ += `<div class="option vertical-option"><span>${line}</span></div>`;
+            });
+        } else {
+            let noPair = buffer.some(line => {
+                let txt = line.replace(/^\([A-Da-d]\)\s*/, "").trim();
+                return txt.length > 18;
+            });
+
+            if (noPair) {
+                buffer.forEach(line => {
+                    currentQ += `<div class="option">${line}</div>`;
+                });
+            } else {
+                for (let i = 0; i < buffer.length; i += 2) {
+                    currentQ += `<div class="option-row">
+                                    <span>${buffer[i] || ""}</span>
+                                    <span>${buffer[i+1] || ""}</span>
+                                 </div>`;
+                }
+            }
         }
-        currentQ += `</div>`;
-        questions.push(currentQ);
+
+        currentQ += `<div style="height:4px;"></div>`; // row spacing
     }
 
-    let i=0;
-    while(i<lines.length){
-        let line = lines[i].trim();
-        if(!line){ i++; continue; }
+    let i = 0;
 
-        if(/^\d+\./.test(line)){
+    while (i < lines.length) {
+
+        let line = lines[i].trim();
+        if (!line) { i++; continue; }
+
+        if (/^\d+\./.test(line)) {
+
             processOptions(optionBuffer);
-            optionBuffer=[];
-            currentQ="";
-            let qLines=[line]; i++;
-            while(i<lines.length && !lines[i].trim().match(/^\([A-Da-d]\)/) && !lines[i].trim().match(/^\d+\./)){
-                if(lines[i].trim()!=="") qLines.push(lines[i].trim());
+            optionBuffer = [];
+
+            if (currentQ) questions.push(currentQ);
+
+            let questionLines = [line];
+            i++;
+
+            while (i < lines.length && 
+                   !lines[i].trim().match(/^\([A-Da-d]\)/) && 
+                   !lines[i].trim().match(/^\d+\./)) {
+
+                if (lines[i].trim() !== "") {
+                    questionLines.push(lines[i].trim());
+                }
                 i++;
             }
-            let fullQ=qLines.join(" ");
-            let match=fullQ.match(/^(\d+\.\s*.*?[?—:])/);
-            if(match){
-                let boldPart=match[1];
-                let rest=fullQ.slice(boldPart.length);
-                fullQ=`<b>${boldPart}</b>${rest}`;
+
+            let fullQuestion = questionLines.join(" ");
+
+            let match = fullQuestion.match(/^(\d+\.\s*.*?[?—:])/);
+            if (match) {
+                let boldPart = match[1];
+                let rest = fullQuestion.slice(boldPart.length);
+                fullQuestion = `<b>${boldPart}</b>${rest}`;
             }
-            currentQ=`<div class="question-block"><div class="question">${fullQ}</div>`;
+
+            currentQ = `<div class="question">${fullQuestion}</div>`;
             continue;
         }
-        if(/^\([A-Da-d]\)/.test(line)) optionBuffer.push(line);
+
+        if (/^\([A-Da-d]\)/.test(line)) {
+            optionBuffer.push(line);
+        }
+
+        if (/Assertion\s*:/i.test(currentQ)) {
+            processOptions(optionBuffer, true);
+            optionBuffer = [];
+        }
+
         i++;
     }
-    processOptions(optionBuffer);
 
-    // ✅ Pages: 12-12 questions per page with left 6% and right 4% margin
-    let pages=[];
-    for(let p=0;p<questions.length;p+=24){
-        let chunk=questions.slice(p,p+24);
-        let left=chunk.slice(0,12).join("");
-        let right=chunk.slice(12).join("");
-        pages.push(`<div class="page-preview"><div class="left-margin"></div><div class="col">${left}</div><div class="col">${right}</div><div class="right-margin"></div></div>`);
-    }
-    paper.innerHTML=pages.join("");
+    processOptions(optionBuffer);
+    if (currentQ) questions.push(currentQ);
+
+    let left = questions.slice(0, 15).join("");
+    let right = questions.slice(15).join("");
+
+    let finalHTML = `
+        <div class="columns">
+            <div class="col">${left}</div>
+            <div class="col">${right}</div>
+        </div>
+    `;
+
+    document.getElementById("paper").innerHTML = finalHTML;
 }
 
-function downloadPDF(){
-    let element=paper;
-    let opt={
-        margin:0,
-        filename:'Question_Paper.pdf',
-        image:{type:'jpeg',quality:1},
-        html2canvas:{scale:2},
-        jsPDF:{unit:'px',format:[1102,1587]}
-    };
-    html2pdf().set(opt).from(element).save();
+function downloadPDF() {
+    let element = document.getElementById('paper');
+    html2pdf().from(element).save('ExamPaper.pdf');
+}
+
+function makeBold() {
+    document.execCommand('bold');
+}
+
+function makeNormal() {
+    document.execCommand('removeFormat');
 }
 </script>
+
 </body>
 </html>
