@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Creator-Rahul</title>
+<title>By Maverix</title>
 
 <style>
 body {
@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: auto;
     background: rgba(255,255,255,0.05);
     padding: 20px;
@@ -55,38 +55,11 @@ button:hover {
     filter: brightness(1.2);
 }
 
-.convert-btn {
-    background: linear-gradient(135deg, #3b82f6, #06b6d4);
-    box-shadow: 0 0 15px #3b82f6;
-    color: white;
-}
-
-.download-btn {
-    background: linear-gradient(135deg, #22c55e, #4ade80);
-    box-shadow: 0 0 15px #22c55e;
-    color: black;
-}
-
-.ai-btn {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    box-shadow: 0 0 15px #0072ff;
-    color: white;
-}
-
-.follow-btn {
-    background: linear-gradient(135deg, #9333ea, #f43f5e);
-    box-shadow: 0 0 15px #9333ea;
-    color: white;
-    padding: 8px 15px;
-}
-
-.help-btn {
-    background: linear-gradient(135deg, #f59e0b, #f97316);
-    box-shadow: 0 0 15px #f59e0b;
-    color: black;
-    padding: 8px 12px;
-    margin-left: 10px;
-}
+.convert-btn {background: linear-gradient(135deg, #3b82f6, #06b6d4); box-shadow: 0 0 15px #3b82f6; color: white;}
+.download-btn {background: linear-gradient(135deg, #22c55e, #4ade80); box-shadow: 0 0 15px #22c55e; color: black;}
+.ai-btn {background: linear-gradient(135deg, #00c6ff, #0072ff); box-shadow: 0 0 15px #0072ff; color: white;}
+.follow-btn {background: linear-gradient(135deg, #9333ea, #f43f5e); box-shadow: 0 0 15px #9333ea; color: white; padding: 8px 15px;}
+.help-btn {background: linear-gradient(135deg, #f59e0b, #f97316); box-shadow: 0 0 15px #f59e0b; color: black; padding: 8px 12px; margin-left: 10px;}
 
 .btn-group {
     display: flex;
@@ -97,77 +70,37 @@ button:hover {
 
 #paper {
     margin-top: 20px;
-    background: white;
     color: black;
-    padding: 20px;
-    border-radius: 10px;
-    min-height: 200px;
     outline: none;
 }
 
-.columns {
+.page-preview {
+    width: 1102px;  /* tabloid width in px approx */
+    min-height: 1587px; /* tabloid height in px approx */
+    background: white;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
     display: flex;
-    gap: 20px;
 }
 
 .col {
-    width: 50%;
+    width: 45%;
 }
 
-.question {
-    font-size: 13px;
-    margin-bottom: 5px;
+.gap {
+    width: 10%;
 }
 
-.option {
-    margin-left: 10px;
-    font-size: 12px;
-}
+.question-block {margin-bottom:8px;}
+.question {font-size:13px; margin-bottom:5px;}
+.option-row {display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;}
 
-.option-row {
-    display: flex;
-    justify-content: space-between;
-    margin-left: 10px;
-    font-size: 12px;
-    margin-bottom: 2px;
-}
-
-.ai-popup {
-    display: none;
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.7);
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-}
-
-.ai-box {
-    background:#111;
-    padding:25px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 0 30px #00c6ff;
-}
-
-/* Tabloid page preview */
-.page-preview {
-    width: 800px;
-    min-height: 1122px;
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-.page-preview .columns {
-    display: flex;
-    gap: 20px;
-}
+.ai-popup {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:999;}
+.ai-box {background:#111; padding:25px; border-radius:15px; text-align:center; box-shadow:0 0 30px #00c6ff;}
 </style>
+
 </head>
 <body>
 
@@ -213,140 +146,90 @@ button:hover {
 let historyStack = [];
 let paper = document.getElementById("paper");
 
-function saveState() {
-    historyStack.push(paper.innerHTML);
-}
+function saveState(){ historyStack.push(paper.innerHTML); }
+function makeBold(){ saveState(); document.execCommand("bold"); }
+function makeNormal(){ saveState(); document.execCommand("removeFormat"); }
+function undoEdit(){ if(historyStack.length>0){ paper.innerHTML = historyStack.pop(); }}
+function showAI(){ document.getElementById("aiPopup").style.display="flex"; }
+function closeAI(){ document.getElementById("aiPopup").style.display="none"; }
+function playConvert(){ document.getElementById("convertSound").play(); }
+function playDownload(){ document.getElementById("downloadSound").play(); }
+function followCreator(){ document.getElementById("followSound").play(); window.open("https://instagram.com/itz_maverix","_blank"); }
+function showManual(){ alert(`📘 HOW TO USE\n\n1. Paste questions properly\n2. Click Convert\n3. Select text → use Bold / Normal buttons\n4. Download PDF`); }
 
-function makeBold() {
-    saveState();
-    document.execCommand("bold");
-}
-
-function makeNormal() {
-    saveState();
-    document.execCommand("removeFormat");
-}
-
-function undoEdit() {
-    if (historyStack.length > 0) {
-        paper.innerHTML = historyStack.pop();
-    }
-}
-
-function showAI(){
-    document.getElementById("aiPopup").style.display="flex";
-}
-
-function closeAI(){
-    document.getElementById("aiPopup").style.display="none";
-}
-
-function playConvert() {
-    document.getElementById("convertSound").play();
-}
-
-function playDownload() {
-    document.getElementById("downloadSound").play();
-}
-
-function followCreator() {
-    document.getElementById("followSound").play();
-    window.open("https://instagram.com/itz_maverix", "_blank");
-}
-
-function showManual(){
-alert(`📘 HOW TO USE
-
-1. Paste questions properly
-2. Click Convert
-3. Select text → use Bold / Normal buttons
-4. Download PDF`);
-}
-
-// ✅ Format questions & page preview
-function formatText() {
+// ✅ FORMAT QUESTIONS + PAGE SPLIT WITH 45-10-45 RATIO
+function formatText(){
     let text = document.getElementById("inputText").value;
     let lines = text.split("\n");
     let questions = [];
     let currentQ = "";
     let optionBuffer = [];
 
-    function processOptions(buffer) {
-        if (!currentQ) return;
-        let noPair = buffer.some(line => line.replace(/^\([A-Da-d]\)\s*/, "").trim().length > 18);
+    function processOptions(buffer){
+        if(!currentQ) return;
         currentQ += `<div style="margin-top:5px;"></div>`;
-        if (noPair) {
-            buffer.forEach(line => {
-                currentQ += `<div class="option">${line}</div>`;
-            });
-        } else {
-            for (let i = 0; i < buffer.length; i += 2) {
-                currentQ += `<div class="option-row">
-                                <span>${buffer[i]||""}</span>
-                                <span>${buffer[i+1]||""}</span>
-                             </div>`;
-            }
+        if(buffer.length === 4){
+            currentQ += `<div class="option-row"><span>${buffer[0]}</span><span>${buffer[1]}</span></div>`;
+            currentQ += `<div class="option-row"><span>${buffer[2]}</span><span>${buffer[3]}</span></div>`;
+        }else{
+            buffer.forEach(line=> currentQ+=`<div class="option-row"><span>${line}</span></div>`);
         }
-        currentQ += `<div style="height:2px;"></div>`;
+        currentQ += `</div>`; // close question-block
+        questions.push(currentQ);
     }
 
     let i=0;
     while(i<lines.length){
-        let line=lines[i].trim();
-        if(!line){i++; continue;}
+        let line = lines[i].trim();
+        if(!line){ i++; continue; }
+
         if(/^\d+\./.test(line)){
             processOptions(optionBuffer);
             optionBuffer=[];
-            if(currentQ) questions.push(currentQ);
+            currentQ="";
             let qLines=[line]; i++;
             while(i<lines.length && !lines[i].trim().match(/^\([A-Da-d]\)/) && !lines[i].trim().match(/^\d+\./)){
-                if(lines[i].trim()!="") qLines.push(lines[i].trim());
+                if(lines[i].trim()!=="") qLines.push(lines[i].trim());
                 i++;
             }
             let fullQ=qLines.join(" ");
-            let match = fullQ.match(/^(\d+\.\s*.*?[?—:])/);
+            let match=fullQ.match(/^(\d+\.\s*.*?[?—:])/);
             if(match){
                 let boldPart=match[1];
                 let rest=fullQ.slice(boldPart.length);
-                fullQ = `<b>${boldPart}</b>${rest}`;
+                fullQ=`<b>${boldPart}</b>${rest}`;
             }
-            currentQ=`<div class="question">${fullQ}</div>`;
+            currentQ=`<div class="question-block"><div class="question">${fullQ}</div>`;
             continue;
         }
         if(/^\([A-Da-d]\)/.test(line)) optionBuffer.push(line);
         i++;
     }
     processOptions(optionBuffer);
-    if(currentQ) questions.push(currentQ);
 
-    // ✅ Page preview logic: 30 questions per page, 2 columns
-    let pages = [];
-    for(let p=0;p<questions.length;p+=30){
-        let chunk = questions.slice(p,p+30);
-        let left = chunk.slice(0,15).join("");
-        let right = chunk.slice(15).join("");
-        pages.push(`<div class="page-preview"><div class="columns">
-            <div class="col">${left}</div>
-            <div class="col">${right}</div>
-        </div></div>`);
+    // ✅ Split into pages: 38 questions per page (19 left + 19 right)
+    let pages=[];
+    for(let p=0;p<questions.length;p+=38){
+        let chunk=questions.slice(p,p+38);
+        let left=chunk.slice(0,19).join("");
+        let right=chunk.slice(19).join("");
+        pages.push(`<div class="page-preview"><div class="col">${left}</div><div class="gap"></div><div class="col">${right}</div></div>`);
     }
-
-    paper.innerHTML = pages.join("");
+    paper.innerHTML=pages.join("");
 }
 
-function downloadPDF() {
-    let element = paper;
-    let pages = element.querySelectorAll(".page-preview");
-    let opt = {
+// ✅ DOWNLOAD PDF
+function downloadPDF(){
+    let element=paper;
+    let opt={
         margin:0,
         filename:'Question_Paper.pdf',
         image:{type:'jpeg',quality:1},
         html2canvas:{scale:2},
-        jsPDF:{unit:'px',format:[1122,1587]} // Tabloid size approx 11x17 inch
+        jsPDF:{unit:'px',format:[1102,1587]}
     };
     html2pdf().set(opt).from(element).save();
 }
 </script>
-
 </body>
 </html>
