@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Creator-Rahul</title>
+<title>Created by Rahul</title>
 
 <style>
 body {
@@ -126,9 +126,10 @@ button:hover {
 
 .option-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-left: 10px;
     font-size: 12px;
+    gap: 15ch; /* 15-character gap */
 }
 
 /* ✅ PDF Pages */
@@ -270,22 +271,17 @@ function formatText() {
 
     function processOptions(buffer){
         if (!currentQ) return;
-        let noPair = buffer.some(line => line.replace(/^\([A-Da-d]\)\s*/, "").trim().length > 18);
-
         currentQ += `<div style="margin-top:5px;"></div>`;
 
-        if(noPair){
-            buffer.forEach(line=>{
-                currentQ += `<div class="option">${line}</div>`;
-            });
-        } else {
-            for(let i=0;i<buffer.length;i+=2){
-                currentQ += `<div class="option-row">
-                    <span>${buffer[i]||""}</span>
-                    <span>${buffer[i+1]||""}</span>
-                </div>`;
-            }
+        for(let i=0;i<buffer.length;i+=2){
+            let left = buffer[i] || "";
+            let right = buffer[i+1] || "";
+            currentQ += `<div class="option-row">
+                <span>${left}</span>
+                <span>${right}</span>
+            </div>`;
         }
+
         currentQ += `<div style="height:12px;"></div>`;
     }
 
@@ -322,7 +318,7 @@ function formatText() {
     processOptions(optionBuffer);
     if(currentQ) questions.push(currentQ);
 
-    // ✅ SPLIT QUESTIONS INTO PAGES 16 PER COLUMN
+    // ✅ SPLIT QUESTIONS INTO PAGES BASED ON A4 FIT (16 PER COLUMN)
     let pages=[];
     for(let p=0;p<questions.length;p+=32){
         let chunk = questions.slice(p,p+32);
@@ -337,15 +333,15 @@ function formatText() {
     paper.innerHTML = pages.join("");
 }
 
-// ✅ DOWNLOAD PDF MULTI-PAGE
+// ✅ DOWNLOAD PDF MULTI-PAGE A4
 function downloadPDF(){
     let element = paper;
     let opt = {
-        margin:0,
+        margin:10,
         filename:'Question_Paper.pdf',
         image:{type:'jpeg',quality:1},
         html2canvas:{scale:2},
-        jsPDF:{unit:'px',format:[794,1122]}
+        jsPDF:{unit:'mm',format:'a4'}
     };
     html2pdf().set(opt).from(element).save();
 }
