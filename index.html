@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>By Rahul</title>
+<title>Creator-Rahul</title>
 
 <style>
 body {
@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-    max-width: 900px;
+    max-width: 1200px;
     margin: auto;
     background: rgba(255,255,255,0.05);
     padding: 20px;
@@ -120,16 +120,16 @@ button:hover {
 }
 
 .option {
+    margin-left: 10px;
     font-size: 12px;
-    margin-top: 2px;
 }
 
 .option-row {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    margin-top: 2px;
+    margin-left: 10px;
     font-size: 12px;
+    margin-bottom: 2px;
 }
 
 .ai-popup {
@@ -152,10 +152,23 @@ button:hover {
     text-align:center;
     box-shadow:0 0 30px #00c6ff;
 }
+
+/* Tabloid page preview */
+.page-preview {
+    width: 800px;
+    min-height: 1122px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.page-preview .columns {
+    display: flex;
+    gap: 20px;
+}
 </style>
-
 </head>
-
 <body>
 
 <div class="container">
@@ -174,7 +187,6 @@ button:hover {
         <button class="convert-btn" onclick="playConvert(); formatText()">⚡ Convert</button>
         <button class="download-btn" onclick="playDownload(); downloadPDF()">📥 Download PDF</button>
         <button class="ai-btn" onclick="showAI()">🤖 AI Answer</button>
-
         <button onclick="makeBold()">🅱 Bold</button>
         <button onclick="makeNormal()">Normal</button>
         <button onclick="undoEdit()">↩ Undo</button>
@@ -201,101 +213,138 @@ button:hover {
 let historyStack = [];
 let paper = document.getElementById("paper");
 
-function saveState() { historyStack.push(paper.innerHTML); }
-function makeBold() { saveState(); document.execCommand("bold"); }
-function makeNormal() { saveState(); document.execCommand("removeFormat"); }
-function undoEdit() { if(historyStack.length>0){ paper.innerHTML = historyStack.pop(); } }
+function saveState() {
+    historyStack.push(paper.innerHTML);
+}
 
-function showAI(){ document.getElementById("aiPopup").style.display="flex"; }
-function closeAI(){ document.getElementById("aiPopup").style.display="none"; }
-function playConvert(){ document.getElementById("convertSound").play(); }
-function playDownload(){ document.getElementById("downloadSound").play(); }
-function followCreator(){ document.getElementById("followSound").play(); window.open("https://instagram.com/itz_maverix","_blank"); }
-function showManual(){ alert(`📘 HOW TO USE\n\n1. Paste questions properly\n2. Click Convert\n3. Select text → use Bold / Normal buttons\n4. Download PDF`); }
+function makeBold() {
+    saveState();
+    document.execCommand("bold");
+}
 
-function formatText(){
+function makeNormal() {
+    saveState();
+    document.execCommand("removeFormat");
+}
+
+function undoEdit() {
+    if (historyStack.length > 0) {
+        paper.innerHTML = historyStack.pop();
+    }
+}
+
+function showAI(){
+    document.getElementById("aiPopup").style.display="flex";
+}
+
+function closeAI(){
+    document.getElementById("aiPopup").style.display="none";
+}
+
+function playConvert() {
+    document.getElementById("convertSound").play();
+}
+
+function playDownload() {
+    document.getElementById("downloadSound").play();
+}
+
+function followCreator() {
+    document.getElementById("followSound").play();
+    window.open("https://instagram.com/itz_maverix", "_blank");
+}
+
+function showManual(){
+alert(`📘 HOW TO USE
+
+1. Paste questions properly
+2. Click Convert
+3. Select text → use Bold / Normal buttons
+4. Download PDF`);
+}
+
+// ✅ Format questions & page preview
+function formatText() {
     let text = document.getElementById("inputText").value;
     let lines = text.split("\n");
     let questions = [];
     let currentQ = "";
     let optionBuffer = [];
 
-    function processOptions(buffer){
-        if(!currentQ) return;
+    function processOptions(buffer) {
+        if (!currentQ) return;
+        let noPair = buffer.some(line => line.replace(/^\([A-Da-d]\)\s*/, "").trim().length > 18);
         currentQ += `<div style="margin-top:5px;"></div>`;
-        for(let i=0;i<buffer.length;i+=4){
-            let a = buffer[i]||"", b=buffer[i+1]||"", c=buffer[i+2]||"", d=buffer[i+3]||"";
-            if(a||b) currentQ+=`<div class="option-row"><span>${a}</span><span>${b}</span></div>`;
-            if(c||d) currentQ+=`<div class="option-row"><span>${c}</span><span>${d}</span></div>`;
+        if (noPair) {
+            buffer.forEach(line => {
+                currentQ += `<div class="option">${line}</div>`;
+            });
+        } else {
+            for (let i = 0; i < buffer.length; i += 2) {
+                currentQ += `<div class="option-row">
+                                <span>${buffer[i]||""}</span>
+                                <span>${buffer[i+1]||""}</span>
+                             </div>`;
+            }
         }
-        currentQ += `<div style="height:5px;"></div>`;
+        currentQ += `<div style="height:2px;"></div>`;
     }
 
     let i=0;
     while(i<lines.length){
-        let line = lines[i].trim();
-        if(!line){ i++; continue; }
-
+        let line=lines[i].trim();
+        if(!line){i++; continue;}
         if(/^\d+\./.test(line)){
-            processOptions(optionBuffer); optionBuffer=[];
+            processOptions(optionBuffer);
+            optionBuffer=[];
             if(currentQ) questions.push(currentQ);
-
             let qLines=[line]; i++;
             while(i<lines.length && !lines[i].trim().match(/^\([A-Da-d]\)/) && !lines[i].trim().match(/^\d+\./)){
                 if(lines[i].trim()!="") qLines.push(lines[i].trim());
                 i++;
             }
-
-            let fullQ = qLines.join(" ");
+            let fullQ=qLines.join(" ");
             let match = fullQ.match(/^(\d+\.\s*.*?[?—:])/);
-            if(match){ let boldPart=match[1]; let rest=fullQ.slice(boldPart.length); fullQ=`<b>${boldPart}</b>${rest}`; }
-            currentQ = `<div class="question">${fullQ}</div>`;
+            if(match){
+                let boldPart=match[1];
+                let rest=fullQ.slice(boldPart.length);
+                fullQ = `<b>${boldPart}</b>${rest}`;
+            }
+            currentQ=`<div class="question">${fullQ}</div>`;
             continue;
         }
-
         if(/^\([A-Da-d]\)/.test(line)) optionBuffer.push(line);
         i++;
     }
-
     processOptions(optionBuffer);
     if(currentQ) questions.push(currentQ);
 
-    // 2-column split: 15 left, 15 right per “page”
+    // ✅ Page preview logic: 30 questions per page, 2 columns
     let pages = [];
-    let perPage = 30;
-    for(let p=0;p<questions.length;p+=perPage){
-        let chunk = questions.slice(p,p+perPage);
+    for(let p=0;p<questions.length;p+=30){
+        let chunk = questions.slice(p,p+30);
         let left = chunk.slice(0,15).join("");
         let right = chunk.slice(15).join("");
-        pages.push(`<div class="columns"><div class="col">${left}</div><div class="col">${right}</div></div>`);
+        pages.push(`<div class="page-preview"><div class="columns">
+            <div class="col">${left}</div>
+            <div class="col">${right}</div>
+        </div></div>`);
     }
 
-    paper.innerHTML = pages.join(`<hr style="margin:20px 0;border:none;border-top:2px dashed #aaa;">`);
+    paper.innerHTML = pages.join("");
 }
 
-function downloadPDF(){
+function downloadPDF() {
     let element = paper;
-    let clone = element.cloneNode(true);
-    clone.style.width = "794px";
-    clone.style.transform = "scale(1)";
-    clone.style.maxHeight = "none";
-    clone.style.margin = "0 auto";
-    document.body.appendChild(clone);
-
-    // Calculate height for PDF
-    let totalHeight = clone.scrollHeight;
-
+    let pages = element.querySelectorAll(".page-preview");
     let opt = {
-        margin: 10,
-        filename: 'Question_Paper.pdf',
-        image: { type:'jpeg', quality:1 },
-        html2canvas: { scale:2, scrollY:-window.scrollY },
-        jsPDF: { unit:'px', format:[794, totalHeight] }
+        margin:0,
+        filename:'Question_Paper.pdf',
+        image:{type:'jpeg',quality:1},
+        html2canvas:{scale:2},
+        jsPDF:{unit:'px',format:[1122,1587]} // Tabloid size approx 11x17 inch
     };
-
-    html2pdf().set(opt).from(clone).save().then(()=>{
-        document.body.removeChild(clone);
-    });
+    html2pdf().set(opt).from(element).save();
 }
 </script>
 
