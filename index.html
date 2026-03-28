@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Creator-Rahul</title>
+<title>Created by Rahul</title>
 
 <style>
 body {
@@ -47,6 +47,7 @@ button {
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
+    font-size: 12px;
 }
 
 button:hover {
@@ -66,14 +67,12 @@ button:hover {
     color: black;
 }
 
-/* 🔥 AI BUTTON */
 .ai-btn {
     background: linear-gradient(135deg, #00c6ff, #0072ff);
     box-shadow: 0 0 15px #0072ff;
     color: white;
 }
 
-/* FOLLOW */
 .follow-btn {
     background: linear-gradient(135deg, #9333ea, #f43f5e);
     box-shadow: 0 0 15px #9333ea;
@@ -81,7 +80,6 @@ button:hover {
     padding: 8px 15px;
 }
 
-/* HELP */
 .help-btn {
     background: linear-gradient(135deg, #f59e0b, #f97316);
     box-shadow: 0 0 15px #f59e0b;
@@ -92,7 +90,8 @@ button:hover {
 
 .btn-group {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 15px;
 }
 
@@ -102,6 +101,8 @@ button:hover {
     color: black;
     padding: 20px;
     border-radius: 10px;
+    min-height: 200px;
+    outline: none;
 }
 
 .columns {
@@ -130,7 +131,6 @@ button:hover {
     font-size: 12px;
 }
 
-/* 🤖 POPUP */
 .ai-popup {
     display: none;
     position: fixed;
@@ -173,12 +173,17 @@ button:hover {
         <button class="convert-btn" onclick="playConvert(); formatText()">⚡ Convert</button>
         <button class="download-btn" onclick="playDownload(); downloadPDF()">📥 Download PDF</button>
         <button class="ai-btn" onclick="showAI()">🤖 AI Answer</button>
+
+        <!-- ✅ MOBILE EDIT BUTTONS -->
+        <button onclick="makeBold()">🅱 Bold</button>
+        <button onclick="makeNormal()">Normal</button>
+        <button onclick="undoEdit()">↩ Undo</button>
     </div>
 
-    <div id="paper"></div>
+    <!-- ✅ Editable Output -->
+    <div id="paper" contenteditable="true"></div>
 </div>
 
-<!-- 🤖 POPUP -->
 <div id="aiPopup" class="ai-popup">
     <div class="ai-box">
         <h2>🚀 Coming Soon</h2>
@@ -194,6 +199,32 @@ button:hover {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
+
+let historyStack = [];
+let paper = document.getElementById("paper");
+
+function saveState() {
+    historyStack.push(paper.innerHTML);
+}
+
+// 🅱 Bold
+function makeBold() {
+    saveState();
+    document.execCommand("bold");
+}
+
+// 🔤 Normal
+function makeNormal() {
+    saveState();
+    document.execCommand("removeFormat");
+}
+
+// ↩ Undo
+function undoEdit() {
+    if (historyStack.length > 0) {
+        paper.innerHTML = historyStack.pop();
+    }
+}
 
 function showAI(){
     document.getElementById("aiPopup").style.display="flex";
@@ -217,24 +248,12 @@ function followCreator() {
 }
 
 function showManual(){
-alert(
-`📘 HOW TO USE
+alert(`📘 HOW TO USE
 
 1. Paste questions properly
 2. Click Convert
-3. Download PDF
-
-⚙️ FEATURES:
-✔ Auto Format
-✔ 2 Column Layout
-✔ Smart Options
-
-⚠️ LIMIT:
-Max 32 Questions
-
-🤖 AI Answer:
-Coming Soon`
-);
+3. Select text → use Bold / Normal buttons
+4. Download PDF`);
 }
 
 function formatText() {
@@ -344,15 +363,10 @@ function downloadPDF() {
 
     let element = document.getElementById("paper");
 
-    // 🧠 SCALE LOGIC
     let originalHeight = element.scrollHeight;
-    let a4Height = 1122; // approx px for A4
+    let a4Height = 1122;
 
-    let scaleFactor = 1;
-
-    if (originalHeight > a4Height) {
-        scaleFactor = a4Height / originalHeight;
-    }
+    let scaleFactor = originalHeight > a4Height ? a4Height / originalHeight : 1;
 
     element.style.transform = `scale(${scaleFactor})`;
     element.style.transformOrigin = "top left";
@@ -362,14 +376,14 @@ function downloadPDF() {
         filename: 'Question_Paper.pdf',
         image: { type: 'jpeg', quality: 1 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'px', format: [794, 1122] } // exact A4 size
+        jsPDF: { unit: 'px', format: [794, 1122] }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-        // 🔄 Reset back
         element.style.transform = "scale(1)";
     });
 }
+
 </script>
 
 </body>
