@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>By Maverix</title>
+<title>Creator-Rahul</title>
 
 <style>
 body {
@@ -75,27 +75,23 @@ button:hover {
 }
 
 .page-preview {
-    width: 1102px;  /* tabloid width in px approx */
-    min-height: 1587px; /* tabloid height in px approx */
+    width: 1102px;  /* tabloid width approx */
+    min-height: 1587px; /* tabloid height approx */
     background: white;
     margin-bottom: 20px;
-    padding: 20px;
+    padding: 20px 0;
     border-radius: 10px;
     box-sizing: border-box;
     display: flex;
 }
 
-.col {
-    width: 45%;
-}
+.left-margin { width:6%; }
+.right-margin { width:4%; }
+.col { width: 45%; padding:0 5px; }
 
-.gap {
-    width: 10%;
-}
-
-.question-block {margin-bottom:8px;}
-.question {font-size:13px; margin-bottom:5px;}
-.option-row {display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;}
+.question-block {margin-bottom:10px;}
+.question {font-size:14px; margin-bottom:5px;} /* slightly bigger */
+.option-row {display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;}
 
 .ai-popup {display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:999;}
 .ai-box {background:#111; padding:25px; border-radius:15px; text-align:center; box-shadow:0 0 30px #00c6ff;}
@@ -157,7 +153,6 @@ function playDownload(){ document.getElementById("downloadSound").play(); }
 function followCreator(){ document.getElementById("followSound").play(); window.open("https://instagram.com/itz_maverix","_blank"); }
 function showManual(){ alert(`📘 HOW TO USE\n\n1. Paste questions properly\n2. Click Convert\n3. Select text → use Bold / Normal buttons\n4. Download PDF`); }
 
-// ✅ FORMAT QUESTIONS + PAGE SPLIT WITH 45-10-45 RATIO
 function formatText(){
     let text = document.getElementById("inputText").value;
     let lines = text.split("\n");
@@ -168,13 +163,13 @@ function formatText(){
     function processOptions(buffer){
         if(!currentQ) return;
         currentQ += `<div style="margin-top:5px;"></div>`;
-        if(buffer.length === 4){
+        if(buffer.length ===4){
             currentQ += `<div class="option-row"><span>${buffer[0]}</span><span>${buffer[1]}</span></div>`;
             currentQ += `<div class="option-row"><span>${buffer[2]}</span><span>${buffer[3]}</span></div>`;
         }else{
             buffer.forEach(line=> currentQ+=`<div class="option-row"><span>${line}</span></div>`);
         }
-        currentQ += `</div>`; // close question-block
+        currentQ += `</div>`;
         questions.push(currentQ);
     }
 
@@ -207,18 +202,17 @@ function formatText(){
     }
     processOptions(optionBuffer);
 
-    // ✅ Split into pages: 38 questions per page (19 left + 19 right)
+    // ✅ Pages: 12-12 questions per page with left 6% and right 4% margin
     let pages=[];
-    for(let p=0;p<questions.length;p+=38){
-        let chunk=questions.slice(p,p+38);
-        let left=chunk.slice(0,19).join("");
-        let right=chunk.slice(19).join("");
-        pages.push(`<div class="page-preview"><div class="col">${left}</div><div class="gap"></div><div class="col">${right}</div></div>`);
+    for(let p=0;p<questions.length;p+=24){
+        let chunk=questions.slice(p,p+24);
+        let left=chunk.slice(0,12).join("");
+        let right=chunk.slice(12).join("");
+        pages.push(`<div class="page-preview"><div class="left-margin"></div><div class="col">${left}</div><div class="col">${right}</div><div class="right-margin"></div></div>`);
     }
     paper.innerHTML=pages.join("");
 }
 
-// ✅ DOWNLOAD PDF
 function downloadPDF(){
     let element=paper;
     let opt={
